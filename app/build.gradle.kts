@@ -66,4 +66,5 @@ dependencies {
     // Networking (for the CVE tab later)
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 }
