@@ -4,5 +4,8 @@
         android:id="@+id/nav_cve_2021_0341"
         android:icon="@android:drawable/ic_menu_info_details"
         android:title="CVE-2021-0341" />
-
+    <item
+        android:id="@+id/nav_cve_2016_2402"
+        android:title="CVE-2016-2402"
+        android:icon="@android:drawable/ic_dialog_info" />
 </menu>

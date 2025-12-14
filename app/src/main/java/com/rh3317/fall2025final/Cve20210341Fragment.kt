@@ -55,12 +55,10 @@ class Cve20210341Fragment : Fragment(R.layout.fragment_cve_2021_0341) {
             override fun onFailure(call: Call, e: IOException) {
                 setResult("FAIL:\n${e.javaClass.name}\n${e.message}")
             }
-
             override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    val body = it.body?.string().orEmpty()
-                    setResult("OK: HTTP ${it.code}\n\n$body")
-                }
+                val code = OkHttpCompat.code(response)
+                val bodyStr = OkHttpCompat.bodyString(response)
+                setResult("OK: HTTP $code\n\n$bodyStr")
             }
         })
     }
@@ -89,42 +87,48 @@ class Cve20210341Fragment : Fragment(R.layout.fragment_cve_2021_0341) {
      * INSECURE ON PURPOSE:
      * - Trusts all server certificates
      * - Disables hostname verification
-     *
-     * This is what makes MITM succeed and is what you'll map to “vulnerable behavior”.
      */
     private fun insecureTrustAllClient(): OkHttpClient {
+        // Trust manager that accepts all certs (INSECURE ON PURPOSE)
         val trustAll = object : X509TrustManager {
-            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
-            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun checkClientTrusted(
+                chain: Array<X509Certificate>,
+                authType: String
+            ) {}
+
+            override fun checkServerTrusted(
+                chain: Array<X509Certificate>,
+                authType: String
+            ) {}
+
             override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
         }
 
+        // Create SSL context using the insecure trust manager
         val sslContext = SSLContext.getInstance("TLS")
-        sslContext.init(null, arrayOf<TrustManager>(trustAll), SecureRandom())
+        sslContext.init(
+            null,
+            arrayOf<TrustManager>(trustAll),
+            SecureRandom()
+        )
 
         val logger = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BASIC
         }
 
-        return OkHttpClient.Builder()
+        val builder = OkHttpClient.Builder()
             .addInterceptor(logger)
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
-            .sslSocketFactory(sslContext.socketFactory, trustAll)
             .hostnameVerifier { _, _ -> true }
-            .build()
+
+        OkHttpCompat.applySsl(
+            builder,
+            sslContext.socketFactory,
+            trustAll
+        )
+
+        return builder.build()
     }
 }
-
-//package com.rh3317.fall2025final
-//
-//import android.os.Bundle
-//import android.view.View
-//import androidx.fragment.app.Fragment
-//
-//class Cve20210341Fragment : Fragment(R.layout.fragment_cve_2021_0341) {
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        // Later: wire buttons to run the CVE-2021-0341 request modes
-//    }
-//}

@@ -33,9 +33,28 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+        allWarningsAsErrors = false
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+    flavorDimensions += "okhttp"
+
+    productFlavors {
+        create("fixed") {
+            dimension = "okhttp"
+        }
+        create("vuln2402") {
+            dimension = "okhttp"
+        }
+    }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        compilerOptions {
+            // Don’t fail the build on OkHttp 4.x deprecation warnings
+            allWarningsAsErrors.set(false)
+            freeCompilerArgs.add("-Werror=false")
+        }
     }
 }
 
@@ -64,7 +83,12 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.8.5")
 
     // Networking (for the CVE tab later)
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+//    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+//    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    add("fixedImplementation", libs.okhttp.fixed)
+    add("fixedImplementation", libs.logging.fixed)
+
+    add("vuln2402Implementation", libs.okhttp.vuln2402)
+    add("vuln2402Implementation", libs.logging.vuln2402)
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 }
