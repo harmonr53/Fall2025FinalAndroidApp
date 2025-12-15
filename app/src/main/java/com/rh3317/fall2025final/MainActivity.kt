@@ -23,8 +23,6 @@ class MainActivity : AppCompatActivity() {
             val fragment = when (item.itemId) {
                 R.id.nav_cve_2021_0341 -> Cve20210341Fragment()
                 R.id.nav_cve_2016_2402 -> Cve20162402Fragment()
-//                R.id.nav_cve_2 -> PlaceholderFragment.new("CVE #2 (coming soon)")
-//                R.id.nav_cve_3 -> PlaceholderFragment.new("CVE #3 (coming soon)")
                 else -> Cve20210341Fragment()
             }
             supportFragmentManager.beginTransaction()

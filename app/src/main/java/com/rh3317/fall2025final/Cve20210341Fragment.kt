@@ -15,9 +15,6 @@ import javax.net.ssl.*
 
 class Cve20210341Fragment : Fragment(R.layout.fragment_cve_2021_0341) {
 
-    // ✅ CHANGE THIS to your HTTPS endpoint behind nginx (recommended to use a hostname on your cert/SAN)
-    // Example:
-    // private val baseUrl = "https://api.lab.local"
     private val baseUrl = "https://10.211.55.9"
 //    private val baseUrl = "https://10.0.2.2:8080"
 

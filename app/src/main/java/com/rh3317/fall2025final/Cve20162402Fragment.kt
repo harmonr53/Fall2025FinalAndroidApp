@@ -23,27 +23,21 @@ class Cve20162402Fragment : Fragment(R.layout.fragment_cve_2016_2402) {
     private lateinit var flavorText: TextView
     private lateinit var btnPinned: Button
 
-    // MUST MATCH the host portion of the URL you request.
-    // If your URL is https://10.211.55.9/test then host = "10.211.55.9"
     private val host = "10.211.55.9"
 
-    // Replace with: sha256/<base64> you computed from your nginx cert public key (SPKI)
     private val pinSha256 = "sha256/Bcx1CwgobSuDImIjPwaThTIu3lDR5iD+K4AkMB/pNoQ="
     private val pinSha1 = "sha1/hQhZWHxzR+EHuQWQknLll74JaZs="
     private val leafPinSha256 = "sha256/Bcx1CwgobSuDImIjPwaThTIu3lDR5iD+K4AkMB/pNoQ="
 
-    // Simple endpoint on your nginx-backed server
     private val url = "https://$host/test"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // These IDs MUST match what’s in fragment_cve_2016_2402.xml
         resultText = view.findViewById(R.id.result_text)
         flavorText = view.findViewById(R.id.flavor_text)
         btnPinned = view.findViewById(R.id.btn_pinned_request)
 
-        // Print build flavor so screenshots prove which variant is running
         flavorText.text = "Flavor: ${BuildConfig.FLAVOR}"
 
         btnPinned.setOnClickListener {
